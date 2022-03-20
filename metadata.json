@@ -1,0 +1,216 @@
+{
+    "symptom_list": ["symp_fever", "symp_cough", "symp_weight_loss", "symp_loss_of_appetite", "symp_lab_mrdt", "symp_vomiting", "symp_bleeding"],
+    "diagnosis_list": ["dx_urti", "dx_bronchiolitis", "dx_bronchitis", "dx_pneumonia", "dx_asthma", "dx_tb", "dx_covid", "dx_malaria", "dx_dengue", "dx_diarrhea", "dx_ebola", "dx_severe"],
+    "node_states":
+    {
+        "symp": 
+        {
+            "symp_fever":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_cough":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_weight_loss":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_loss_of_appetite":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_lab_mrdt":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_vomiting":
+            {
+                "state_names": ["True", "False"]
+            },
+            "symp_bleeding":
+            {
+                "state_names": ["True", "False"]
+            }
+        },
+        "dx": 
+        {
+            "dx_urti": 
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_bronchiolitis": 
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_bronchitis":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_pneumonia":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_asthma":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_tb":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_covid":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_malaria":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_dengue":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_diarrhea":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_ebola":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "dx_severe":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            }
+
+        }
+    },
+    "symp_dx_prob":
+    {
+        "dx_urti": 
+        {
+            "symp_fever": 0.4,
+            "symp_cough": 0.7,
+            "symp_loss_of_appetite": 0.2,
+            "symp_vomiting": 0.02
+        },
+        "dx_bronchiolitis": 
+        {
+            "symp_fever": 0.7,
+            "symp_cough": 0.9,
+            "symp_loss_of_appetite": 0.2,
+            "symp_vomiting": 0.02
+        },
+        "dx_bronchitis": 
+        {
+            "symp_fever": 0.7,
+            "symp_cough": 0.9,
+            "symp_loss_of_appetite": 0.2,
+            "symp_vomiting": 0.02
+        },
+        "dx_pneumonia": 
+        {
+            "symp_fever": 0.9,
+            "symp_cough": 1, 
+            "symp_loss_of_appetite": 0.2,
+            "symp_vomiting": 0.02
+        },
+        "dx_asthma": 
+        {
+            "symp_cough": 0.4, 
+            "symp_loss_of_appetite": 0.05,
+            "symp_vomiting": 0.02
+        },
+        "dx_tb": 
+        {
+            "symp_fever": 0.9,
+            "symp_cough": 1,
+            "symp_weight_loss": 0.6,
+            "symp_loss_of_appetite": 0.8,
+            "symp_vomiting": 0.02,
+            "symp_bleeding": 0.15
+        },
+        "dx_covid": 
+        {
+            "symp_fever": 0.5,
+            "symp_cough": 0.4,
+            "symp_loss_of_appetite": 0.5,
+            "symp_vomiting": 0.05
+        },
+        "dx_malaria": 
+        {
+            "symp_fever": 1,
+            "symp_cough": 0.05,
+            "symp_weight_loss": 0.05,
+            "symp_loss_of_appetite": 0.7,
+            "symp_lab_mrdt": 1,
+            "symp_vomiting": 0.2,
+            "symp_bleeding": 0.1
+        },
+        "dx_dengue": 
+        {
+            "symp_fever": 1,
+            "symp_cough": 0.05,
+            "symp_weight_loss": 0.05,
+            "symp_loss_of_appetite": 0.7,
+            "symp_lab_mrdt": 0.05,
+            "symp_vomiting": 0.2,
+            "symp_bleeding": 0.05
+        },
+        "dx_diarrhea": 
+        {
+            "symp_fever": 1,
+            "symp_cough": 0.05,
+            "symp_weight_loss": 0.05,
+            "symp_loss_of_appetite": 0.7,
+            "symp_vomiting": 0.2,
+            "symp_bleeding": 0.05
+        },
+        "dx_ebola": 
+        {
+            "symp_fever": 0.7,
+            "symp_cough": 0.25,
+            "symp_weight_loss": 0.05,
+            "symp_loss_of_appetite": 0.6,
+            "symp_lab_mrdt": 0.05,
+            "symp_vomiting": 0.5,
+            "symp_bleeding": 0.4
+        },
+        "dx_severe": 
+        {
+            "symp_fever": 0.04,
+            "symp_cough": 0.4,
+            "symp_weight_loss": 0.05,
+            "symp_loss_of_appetite": 0.4,
+            "symp_lab_mrdt": 0.2,
+            "symp_vomiting": 0.4,
+            "symp_bleeding": 0.2
+        }
+    }
+}

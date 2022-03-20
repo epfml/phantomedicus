@@ -1,2 +1,2 @@
-# MedSurge
-MedSurge: medical survey generator
+# PhantoMedicus
+Medical Survey Generator

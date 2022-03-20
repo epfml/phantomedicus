@@ -1,0 +1,9 @@
+name: phantomedicus 
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9.1
+  - munch
+  - pip:
+    - pgmpy==0.1.17
+
