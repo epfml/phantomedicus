@@ -1,216 +1,278 @@
 {
-    "symptom_list": ["symp_fever", "symp_cough", "symp_weight_loss", "symp_loss_of_appetite", "symp_lab_mrdt", "symp_vomiting", "symp_bleeding"],
-    "diagnosis_list": ["dx_urti", "dx_bronchiolitis", "dx_bronchitis", "dx_pneumonia", "dx_asthma", "dx_tb", "dx_covid", "dx_malaria", "dx_dengue", "dx_diarrhea", "dx_ebola", "dx_severe"],
+    "disease_list": ["disease_urti", "disease_bronchiolitis", "disease_bronchitis", "disease_pneumonia", "disease_asthma", "disease_tb", "disease_covid", "disease_malaria", "disease_dengue", "disease_diarrhea", "disease_ebola", "disease_severe"],
+    "symptom_list": ["symptom_fever", "symptom_cough", "symptom_weight_loss", "symptom_loss_of_appetite", "symptom_lab_mrdt", "symptom_vomiting", "symptom_bleeding"],
     "node_states":
     {
-        "symp": 
+        "patient_attributes":
         {
-            "symp_fever":
+            "country":
             {
+                "prob": [0.25, 0.25, 0.25, 0.25],
+                "state_names": ["Switzerland", "Nigeria", "Brazil", "South Korea"]
+            },
+            "age":
+            {
+                "prob": [0.15, 0.20, 0.30, 0.35],
+                "state_names": ["child", "young", "middle-aged", "elderly"]
+            },
+            "season":
+            {
+                "prob": [0.25, 0.25, 0.25, 0.25],
+                "state_names": ["winter", "spring", "summer", "fall"]
+            }
+        },
+        "diseases": 
+        {
+            "disease_urti": 
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_cough":
+            "disease_bronchiolitis": 
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_weight_loss":
+            "disease_bronchitis":
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_loss_of_appetite":
+            "disease_pneumonia":
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_lab_mrdt":
+            "disease_asthma":
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_vomiting":
+            "disease_tb":
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "symp_bleeding":
+            "disease_covid":
             {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "disease_malaria":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "disease_dengue":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "disease_diarrhea":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "disease_ebola":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
+                "state_names": ["True", "False"]
+            },
+            "disease_severe":
+            {
+                "binary": 1,
+                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             }
         },
-        "dx": 
+        "symptoms": 
         {
-            "dx_urti": 
+            "symptom_fever":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_bronchiolitis": 
+            "symptom_cough":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_bronchitis":
+            "symptom_weight_loss":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_pneumonia":
+            "symptom_loss_of_appetite":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_asthma":
+            "symptom_lab_mrdt":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_tb":
+            "symptom_vomiting":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             },
-            "dx_covid":
+            "symptom_bleeding":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
-                "state_names": ["True", "False"]
-            },
-            "dx_malaria":
-            {
-                "binary": 1,
-                "prob": [0.1, 0.9],
-                "state_names": ["True", "False"]
-            },
-            "dx_dengue":
-            {
-                "binary": 1,
-                "prob": [0.1, 0.9],
-                "state_names": ["True", "False"]
-            },
-            "dx_diarrhea":
-            {
-                "binary": 1,
-                "prob": [0.1, 0.9],
-                "state_names": ["True", "False"]
-            },
-            "dx_ebola":
-            {
-                "binary": 1,
-                "prob": [0.1, 0.9],
-                "state_names": ["True", "False"]
-            },
-            "dx_severe":
-            {
-                "binary": 1,
-                "prob": [0.1, 0.9],
                 "state_names": ["True", "False"]
             }
-
         }
     },
-    "symp_dx_prob":
+    "patient_attribute_disease_probs":
     {
-        "dx_urti": 
-        {
-            "symp_fever": 0.4,
-            "symp_cough": 0.7,
-            "symp_loss_of_appetite": 0.2,
-            "symp_vomiting": 0.02
+        "country": {
+            "disease_urti": [0.07, 0.04, 0.05, 0.04], 
+            "disease_bronchiolitis": [0.07, 0.04, 0.05, 0.04], 
+            "disease_bronchitis": [0.07, 0.04, 0.05, 0.04],
+            "disease_pneumonia": [0.07, 0.04, 0.05, 0.04], 
+            "disease_asthma": [0.07, 0.04, 0.05, 0.04], 
+            "disease_tb": [0.07, 0.04, 0.05, 0.04], 
+            "disease_covid": [0.07, 0.04, 0.05, 0.04], 
+            "disease_malaria": [0.07, 0.04, 0.05, 0.04], 
+            "disease_dengue": [0.07, 0.04, 0.05, 0.04], 
+            "disease_diarrhea": [0.07, 0.04, 0.05, 0.04], 
+            "disease_ebola": [0.07, 0.04, 0.05, 0.04], 
+            "disease_severe": [0.07, 0.04, 0.05, 0.04]
         },
-        "dx_bronchiolitis": 
-        {
-            "symp_fever": 0.7,
-            "symp_cough": 0.9,
-            "symp_loss_of_appetite": 0.2,
-            "symp_vomiting": 0.02
+        "age": {
+            "disease_urti": [0.04, 0.06, 0.08, 0.1], 
+            "disease_bronchiolitis": [0.04, 0.06, 0.08, 0.1], 
+            "disease_bronchitis": [0.04, 0.06, 0.08, 0.1],
+            "disease_pneumonia": [0.04, 0.06, 0.08, 0.1], 
+            "disease_asthma": [0.04, 0.06, 0.08, 0.1], 
+            "disease_tb": [0.04, 0.06, 0.08, 0.1], 
+            "disease_covid": [0.04, 0.06, 0.08, 0.1], 
+            "disease_malaria": [0.04, 0.06, 0.08, 0.1], 
+            "disease_dengue": [0.04, 0.06, 0.08, 0.1], 
+            "disease_diarrhea": [0.04, 0.06, 0.08, 0.1], 
+            "disease_ebola": [0.04, 0.06, 0.08, 0.1], 
+            "disease_severe": [0.04, 0.06, 0.08, 0.1]
         },
-        "dx_bronchitis": 
+        "season": {
+            "disease_urti": [0.1, 0.06, 0.04, 0.08], 
+            "disease_bronchiolitis": [0.1, 0.06, 0.04, 0.08], 
+            "disease_bronchitis": [0.1, 0.06, 0.04, 0.08],
+            "disease_pneumonia": [0.1, 0.06, 0.04, 0.08], 
+            "disease_asthma": [0.1, 0.06, 0.04, 0.08], 
+            "disease_tb": [0.1, 0.06, 0.04, 0.08], 
+            "disease_covid": [0.1, 0.06, 0.04, 0.08], 
+            "disease_malaria": [0.1, 0.06, 0.04, 0.08], 
+            "disease_dengue": [0.1, 0.06, 0.04, 0.08], 
+            "disease_diarrhea": [0.1, 0.06, 0.04, 0.08], 
+            "disease_ebola": [0.1, 0.06, 0.04, 0.08], 
+            "disease_severe": [0.1, 0.06, 0.04, 0.08]
+        }
+    },
+    "disease_symptom_probs":
+    {
+        "disease_urti": 
         {
-            "symp_fever": 0.7,
-            "symp_cough": 0.9,
-            "symp_loss_of_appetite": 0.2,
-            "symp_vomiting": 0.02
+            "symptom_fever": 0.4,
+            "symptom_cough": 0.7,
+            "symptom_loss_of_appetite": 0.2,
+            "symptom_vomiting": 0.02
         },
-        "dx_pneumonia": 
+        "disease_bronchiolitis": 
         {
-            "symp_fever": 0.9,
-            "symp_cough": 1, 
-            "symp_loss_of_appetite": 0.2,
-            "symp_vomiting": 0.02
+            "symptom_fever": 0.7,
+            "symptom_cough": 0.9,
+            "symptom_loss_of_appetite": 0.2,
+            "symptom_vomiting": 0.02
         },
-        "dx_asthma": 
+        "disease_bronchitis": 
         {
-            "symp_cough": 0.4, 
-            "symp_loss_of_appetite": 0.05,
-            "symp_vomiting": 0.02
+            "symptom_fever": 0.7,
+            "symptom_cough": 0.9,
+            "symptom_loss_of_appetite": 0.2,
+            "symptom_vomiting": 0.02
         },
-        "dx_tb": 
+        "disease_pneumonia": 
         {
-            "symp_fever": 0.9,
-            "symp_cough": 1,
-            "symp_weight_loss": 0.6,
-            "symp_loss_of_appetite": 0.8,
-            "symp_vomiting": 0.02,
-            "symp_bleeding": 0.15
+            "symptom_fever": 0.9,
+            "symptom_cough": 1, 
+            "symptom_loss_of_appetite": 0.2,
+            "symptom_vomiting": 0.02
         },
-        "dx_covid": 
+        "disease_asthma": 
         {
-            "symp_fever": 0.5,
-            "symp_cough": 0.4,
-            "symp_loss_of_appetite": 0.5,
-            "symp_vomiting": 0.05
+            "symptom_cough": 0.4, 
+            "symptom_loss_of_appetite": 0.05,
+            "symptom_vomiting": 0.02
         },
-        "dx_malaria": 
+        "disease_tb": 
         {
-            "symp_fever": 1,
-            "symp_cough": 0.05,
-            "symp_weight_loss": 0.05,
-            "symp_loss_of_appetite": 0.7,
-            "symp_lab_mrdt": 1,
-            "symp_vomiting": 0.2,
-            "symp_bleeding": 0.1
+            "symptom_fever": 0.9,
+            "symptom_cough": 1,
+            "symptom_weight_loss": 0.6,
+            "symptom_loss_of_appetite": 0.8,
+            "symptom_vomiting": 0.02,
+            "symptom_bleeding": 0.15
         },
-        "dx_dengue": 
+        "disease_covid": 
         {
-            "symp_fever": 1,
-            "symp_cough": 0.05,
-            "symp_weight_loss": 0.05,
-            "symp_loss_of_appetite": 0.7,
-            "symp_lab_mrdt": 0.05,
-            "symp_vomiting": 0.2,
-            "symp_bleeding": 0.05
+            "symptom_fever": 0.5,
+            "symptom_cough": 0.4,
+            "symptom_loss_of_appetite": 0.5,
+            "symptom_vomiting": 0.05
         },
-        "dx_diarrhea": 
+        "disease_malaria": 
         {
-            "symp_fever": 1,
-            "symp_cough": 0.05,
-            "symp_weight_loss": 0.05,
-            "symp_loss_of_appetite": 0.7,
-            "symp_vomiting": 0.2,
-            "symp_bleeding": 0.05
+            "symptom_fever": 1,
+            "symptom_cough": 0.05,
+            "symptom_weight_loss": 0.05,
+            "symptom_loss_of_appetite": 0.7,
+            "symptom_lab_mrdt": 1,
+            "symptom_vomiting": 0.2,
+            "symptom_bleeding": 0.1
         },
-        "dx_ebola": 
+        "disease_dengue": 
         {
-            "symp_fever": 0.7,
-            "symp_cough": 0.25,
-            "symp_weight_loss": 0.05,
-            "symp_loss_of_appetite": 0.6,
-            "symp_lab_mrdt": 0.05,
-            "symp_vomiting": 0.5,
-            "symp_bleeding": 0.4
+            "symptom_fever": 1,
+            "symptom_cough": 0.05,
+            "symptom_weight_loss": 0.05,
+            "symptom_loss_of_appetite": 0.7,
+            "symptom_lab_mrdt": 0.05,
+            "symptom_vomiting": 0.2,
+            "symptom_bleeding": 0.05
         },
-        "dx_severe": 
+        "disease_diarrhea": 
         {
-            "symp_fever": 0.04,
-            "symp_cough": 0.4,
-            "symp_weight_loss": 0.05,
-            "symp_loss_of_appetite": 0.4,
-            "symp_lab_mrdt": 0.2,
-            "symp_vomiting": 0.4,
-            "symp_bleeding": 0.2
+            "symptom_fever": 1,
+            "symptom_cough": 0.05,
+            "symptom_weight_loss": 0.05,
+            "symptom_loss_of_appetite": 0.7,
+            "symptom_vomiting": 0.2,
+            "symptom_bleeding": 0.05
+        },
+        "disease_ebola": 
+        {
+            "symptom_fever": 0.7,
+            "symptom_cough": 0.25,
+            "symptom_weight_loss": 0.05,
+            "symptom_loss_of_appetite": 0.6,
+            "symptom_lab_mrdt": 0.05,
+            "symptom_vomiting": 0.5,
+            "symptom_bleeding": 0.4
+        },
+        "disease_severe": 
+        {
+            "symptom_fever": 0.04,
+            "symptom_cough": 0.4,
+            "symptom_weight_loss": 0.05,
+            "symptom_loss_of_appetite": 0.4,
+            "symptom_lab_mrdt": 0.2,
+            "symptom_vomiting": 0.4,
+            "symptom_bleeding": 0.2
         }
     }
 }
