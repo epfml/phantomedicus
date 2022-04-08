@@ -129,7 +129,7 @@ if __name__ == "__main__":
    # random_doctor = RandomDoctor(data)
    # rnd_consultation = random_doctor.conduct_consultation()
    # random_doctor.save_consultation("data/random_consultation.pickle")
-    embed()
+
     dt_doctor = DecisionTreeDoctor(data)
     dt_consultation = dt_doctor.conduct_consultation()
     dt_doctor.save_consultation("data/dt_consultation.pickle")

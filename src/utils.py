@@ -18,7 +18,7 @@ def decision_tree_consultation(clf, patient, symptoms):
     node_index = node_indicator.indices[:-1]
     # assert clf.tree_.max_depth == node_index.shape[0], "tree depth and consulation path mismatch..." # this assertion doesn't have to be true..
     questions = symptoms[feature[node_index]]
-    answers = x[:, feature[node_index]]
+    answers = x[:, feature[node_index]].reshape(-1)
 
     return [(q, a) for q, a in zip(questions, answers)]
 
