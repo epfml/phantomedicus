@@ -4,6 +4,10 @@ channels:
 dependencies:
   - python=3.9.1
   - munch
+  - pandas
+  - numpy
+  - IPython
+  - scikit-learn 
   - pip:
     - pgmpy==0.1.17
-
+    - graphviz
