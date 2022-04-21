@@ -15,17 +15,17 @@ from pgmpy.sampling import BayesianModelSampling
 
 
 class Patient:
-    def __init__(self, metadata, gender, age, country):
+    def __init__(self, patient_info):
         # define symptoms of patient
-        self.gender = gender
-        self.age = age
-        self.country = country
-        self.metadata = metadata
-        self.assign_diagnoses()
+        self.patient_info = patient_info.to_dict()
+        self.potential_symptoms = np.array([x for x in self.patient_info.keys() if 'symptom' in x])
+        self.potential_diseases = np.array([x for x in self.patient_info.keys() if 'disease' in x])
+        self.base_features = [v for k, v in self.patient_info.items() if not ('symptom' in k or 'disease' in k)]
+        self.symptoms = [k for k, v in self.patient_info.items() if (v == True and k in self.potential_symptoms)]
+        self.diseases = [k for k, v in self.patient_info.items() if (v == True and k in self.potential_diseases)]
 
-    def assign_diagnoses(self):
-        disease_states = self.metadata.node_states.diseases
-        self.diagnoses = {disease: np.random.choice(disease_states[disease].state_names, 1, p=disease_states[disease].prob)[0] for disease in self.metadata.disease_list}
+    def __str__(self):
+        return str(self.patient_info)
 
 
 class PatientSimulator:
@@ -37,6 +37,7 @@ class PatientSimulator:
         self.init_bayesian_model()
         self.symptoms = self.metadata.symptom_list
         self.diagnoses = self.metadata.disease_list
+        self.patient_list = []
 
 
     def init_bayesian_model(self):
@@ -98,44 +99,33 @@ class PatientSimulator:
 
         print("Bayesian network configured\n")
 
-    def inference(self):
-        # infer = VariableElimination(self.model) # querying very slow with additional base factors
+    def run_simulation(self, n_patients, evidence=None):
+        """
+        Run simulation using BayesianModelSampling class. Can sample either with or without evidence.
+        """
+        # infer = VariableElimination(self.model) # exact querying very slow with additional base factors
         # symptom_probs = infer.query(self.symptoms, evidence=patient.diagnoses)
-        inference = BayesianModelSampling(self.model) # instead we opt for
-
-        return inference
-
-
-class SimulateSurvey:
-    # TODO: incorporate missingness in survey questions randomly (perhaps conditionally i.e. depending on doctor/ region)
-    # TODO: return list of (q, a) tuples per patient
-    def __init__(self, bayes_net, n_patients, metadata):
-        self.bayes_net = bayes_net
-        self.n_patients = n_patients
-        self.metadata = metadata
-
-    def run_simulation(self):
-        inference_engine = self.bayes_net.inference()
-        self.survey = inference_engine.forward_sample(self.n_patients)
+        inference_engine = BayesianModelSampling(self.model) # we opt for this instead
+        if not evidence:
+            df_patients = inference_engine.forward_sample(n_patients)
+        elif evidence:
+            # rejection sampling approach inefficient, we consider weighted likelihood sampling instead
+            # self.df_patients = inference_engine.reject_sample(self.n_patients)
+            df_patients = inference_engine.likelihood_weighted_sample(evidence=evidence, size=n_patients)
 
         print("Dataset generated")
-        return self.survey
+        return df_patients
+
+    def df_to_patient_batch(self, df_patients):
+        patient_list = []
+        for ind, patient_data in df_patients.iterrows():
+            patient_list.append(Patient(patient_data))
+
+        return patient_list
+
 
     def save_survey(self, path):
         Path(path).mkdir(parents=True, exist_ok=True)
         self.survey.to_csv(path + "/patient_data.csv", mode='w', index=False)
         print(f"Survey saved to {path}/patient_data.csv")
-
-
-if __name__=="__main__":
-    with open("metadata.json") as f:
-        metadata = json.load(f)
-    metadata = munchify(metadata)
-
-    bayes_net = PatientSimulator(metadata)
-    surveySimulator = SimulateSurvey(bayes_net, 100000, metadata)
-    df_survey = surveySimulator.run_simulation()
-    surveySimulator.save_survey("data")
-
-    embed()
 

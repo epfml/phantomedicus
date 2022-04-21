@@ -1,6 +1,17 @@
 {
     "disease_list": ["disease_urti", "disease_bronchiolitis", "disease_bronchitis", "disease_pneumonia", "disease_asthma", "disease_tb", "disease_covid", "disease_malaria", "disease_dengue", "disease_diarrhea", "disease_ebola", "disease_severe"],
     "symptom_list": ["symptom_fever", "symptom_cough", "symptom_weight_loss", "symptom_loss_of_appetite", "symptom_lab_mrdt", "symptom_vomiting", "symptom_bleeding"],
+    "doctors":
+    {
+        "types": ["decision_tree", "random"],
+        "prob_by_country": 
+        {
+            "Switzerland": [0.9, 0.1],
+            "Nigeria": [0.6, 0.4],
+            "Brazil": [0.6, 0.4],
+            "South Korea": [0.9, 0.1]
+        }
+    },
     "node_states":
     {
         "patient_attributes":
