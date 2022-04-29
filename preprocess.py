@@ -32,12 +32,12 @@ if __name__=="__main__":
     base_features = []
 
     _considered_diseases = [
-        'classify_uti_febrile', 'classify_abdo_constipation', 'classify_abdo_gastro',
+        'classify_diarrhoea_persistent', 'classify_uti_febrile', 'classify_abdo_constipation', 'classify_abdo_gastro',
         'classify_abdo_resp_pain', 'classify_abdo_unclassified', 'classify_anaphylaxis',
         'classify_anaphylaxis_severe', 'classify_anemia_non_severe', 'classify_anemia_severe',
         'classify_cough_bronchiolitis', 'classify_cough_persistent', 'classify_cough_pneumonia',
         'classify_cough_urti', 'classify_cystitis_acute', 'classify_dehydration_moderate',
-        'classify_dehydration_none', 'classify_diarrhoea_persistent', 'classify_dysentery_non_compl',
+        'classify_dehydration_none',  'classify_dysentery_non_compl',
         'classify_ear_acute_infection', 'classify_ear_chronic_discharge','classify_ear_mastoiditis',
         'classify_ear_unclassified', 'classify_eye_unclassified', 'classify_fever_persistent',
         'classify_likely_viral_oma', 'classify_malaria_severe', 'classify_malaria_simple_new', 'classify_malnut_2ds_only__6m',
@@ -52,8 +52,8 @@ if __name__=="__main__":
     considered_diseases = ["disease_" + "_".join(x.split("_")[1:]) for x in _considered_diseases]
 
     _considered_symptoms = [
-        's_temp', 's_oedema', 's_drepano', 's_fever_temp', 's_fever_his',
-        's_cough', 's_diarr', 's_abdopain', 's_vomit', 's_skin', 's_earpain', 's_eyepb', 's_throat',
+        's_diarr', 's_oedema','s_temp', 's_drepano', 's_fever_temp', 's_fever_his',
+        's_cough',  's_abdopain', 's_vomit', 's_skin', 's_earpain', 's_eyepb', 's_throat',
         's_mouthpb', 's_dysuria', 's_hematuria', 's_joint', 's_limp', 'ms_measles'
     ]
     considered_symptoms = ["symptom_" + "_".join(x.split("_")[1:]) for x in _considered_symptoms]
@@ -87,39 +87,39 @@ if __name__=="__main__":
                 vals, inds = np.unique(df[disease], return_inverse=True)
                 neg_inds = inds == 0
                 pos_inds = inds == 1
-                num_valid = neg_inds.shape[0] + pos_inds.shape[0]
-
+                num_valid = sum(neg_inds) + sum(pos_inds)
                 assert np.all(np.array(df[neg_inds][disease]) == 0), "not all negative indices correspond to negative cases"
                 assert np.all(np.array(df[pos_inds][disease]) == 1), "not all negative indices correspond to negative cases"
 
                 # proportion of patients with disease that also have symptom
-                prob_symptom_with_disease = sum(df[pos_inds][symptom] == 1) / num_valid
+                prob_symptom_with_disease = sum(df[pos_inds][symptom] == 1) / sum(pos_inds)
                 prob_no_symptom_with_disease = 1 - prob_symptom_with_disease
                 assert (prob_symptom_with_disease <= 1) & (prob_no_symptom_with_disease <= 1), f"prob of having/ not having {symptom} greater than 1"
 
                 # proportion of patients without disease that also have symptom
-                prob_symptom_no_disease = sum(df[neg_inds][symptom] == 1) / num_valid
+                prob_symptom_no_disease = sum(df[neg_inds][symptom] == 1) / sum(neg_inds)
                 prob_no_symptom_no_disease = 1 - prob_symptom_no_disease
                 assert (prob_symptom_no_disease <= 1) & (prob_no_symptom_no_disease <= 1), f"prob of having/ not having {symptom} greater than 1"
 
                 if symptom in disease_symptom_prob_dict.keys():
                     if disease_symptom_prob_dict[symptom]:
-                        disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_with_disease, prob_symptom_no_disease])
+                        disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_no_disease, prob_symptom_with_disease])
                     else:
                         disease_symptom_prob_dict[symptom] = {}
-                        disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_with_disease, prob_symptom_no_disease])
+                        disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_no_disease, prob_symptom_with_disease])
                 else:
                     disease_symptom_prob_dict[symptom] = {}
-                    disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_with_disease, prob_symptom_no_disease])
+                    disease_symptom_prob_dict[symptom][disease] = np.array([prob_symptom_no_disease, prob_symptom_with_disease])
 
                 # disease_symptom_prob_dict[symptom] = {disease: np.array([prob_symptom_with_disease, prob_symptom_no_disease])}
             else:
                 num_valid = len(df[disease].dropna())
+                num_pos = len(df[disease] == 1)
                 prob_symptom_within_fever_range = []
                 for i in range(len(fever_bins) - 1):
                     fever_inds = (df[symptom] > fever_bins[i]) & (df[symptom] <= fever_bins[i + 1])
                     pos_disease_inds = df[disease] == 1
-                    p = sum(df[fever_inds & pos_disease_inds][disease] == 1) / num_valid
+                    p = sum(df[fever_inds & pos_disease_inds][disease] == 1) / num_pos
                     prob_symptom_within_fever_range.append(p)
 
                 if symptom in disease_symptom_prob_dict.keys():
@@ -132,7 +132,6 @@ if __name__=="__main__":
                     disease_symptom_prob_dict[symptom] = {}
                     disease_symptom_prob_dict[symptom][disease] = np.array(prob_symptom_within_fever_range)
 
-    embed()
-
     pickle_object(disease_symptom_prob_dict, cfg.consultation_data_prob_dict_path)
 
+    embed()
