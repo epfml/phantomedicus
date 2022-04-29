@@ -12,6 +12,10 @@ class Config():
 def load_config(metadata):
     cfg = Config()
 
+    # set to True if you want to extract statistics from existing consultation data, and provide the path
+    cfg.generate_from_consultation_data = True
+    cfg.consultation_data_path = "../data/all_preprocessed.csv"
+    cfg.consultation_data_prob_dict_path = "data/consultation_data_prob_dict.pkl"
 
     cfg.n_clinics = 50
     cfg.n_patients_per_clinic = 1000

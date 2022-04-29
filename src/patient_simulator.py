@@ -77,7 +77,6 @@ class PatientSimulator:
 
             associated_disease_state_combinations = np.array(list(product(*[[1, 0] for disease in associated_disease])))
             associated_disease_probs = np.array([self.metadata.disease_symptom_probs[disease][symp] for disease in associated_disease])
-
             # defining probability of symptom for each combination of diagnoses - simple max for now
             # aggregating individual cpds into multivariate cpds: https://www.cmu.edu/dietrich/sds/ddmlab/papers/GonzalezVrbin2007.pdf
             prob_dist_combinations = associated_disease_probs * associated_disease_state_combinations
@@ -86,7 +85,6 @@ class PatientSimulator:
             assert np.min(max_prob_per_comb) > 0, f"there is a disease configuration for which the probability of {symp} is 0"
 
             values = np.concatenate([max_prob_per_comb, 1 - max_prob_per_comb], axis=0)
-
             symp_state_names = {symp: self.metadata.node_states.symptoms[symp].state_names}
             disease_state_names = {disease: self.metadata.node_states.diseases[disease].state_names for disease in associated_disease}
             cpd = TabularCPD(variable=symp,
@@ -98,6 +96,11 @@ class PatientSimulator:
             self.model.add_cpds(cpd)
 
         print("Bayesian network configured\n")
+
+
+    def init_bayesian_model_from_data(self):
+        pass
+
 
     def run_simulation(self, n_patients, evidence=None):
         """
