@@ -11,3 +11,5 @@ dependencies:
   - pip:
     - pgmpy==0.1.17
     - graphviz
+    - cumulator
+    - tqdm
