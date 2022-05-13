@@ -23,10 +23,11 @@ def load_config(metadata):
     cfg.doctor_dict = \
         {
             "decision_tree": DecisionTreeDoctor,
-            "random": RandomDoctor
+            "random": RandomDoctor,
+            "biased": BiasedDoctor
         }
 
-    cfg.doctor_kwargs = \
+    cfg.doctor_kwargs =
         {
             'symptoms': np.array(metadata.symptom_list),
             'diseases': np.array(metadata.disease_list),

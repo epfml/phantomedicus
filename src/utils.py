@@ -6,6 +6,31 @@ from sklearn import tree
 from IPython import embed
 
 
+def one_hot_encode_patient_df(df, metadata, categorical_columns=None):
+    df.replace({"True": 1, "False": 0}, inplace=True)
+    embed()
+    for base_attr in metadata.node_states["patient_attributes"].keys():
+        print(base_attr)
+        if not metadata.node_states["patient_attributes"][base_attr].dtype == "binary":
+            unique_col_entries = np.unique(df[base_attr])
+            for entry in unique_col_entries:
+                df["_".join([base_attr, entry])] = np.where(df[base_attr] == entry, 1, 0)
+            df.drop(base_attr, axis=1, inplace=True)
+    for symptom in metadata.node_states["symptoms"].keys():
+        if metadata.node_states["symptoms"][symptom].dtype == "continuous":
+            unique_col_entries = np.unique(df[symptom])
+            for entry in unique_col_entries:
+                df["_".join([symptom, entry])] = np.where(df[symptom] == entry, 1, 0)
+            df.drop(symptom, axis=1, inplace=True)
+    embed()
+    pass
+
+# bins = metadata.node_states["symptoms"][symptom].vals
+#            for i in range(len(bins) - 1):
+#                val_inds = (df[symptom] > bins[i]) & (df[symptom] <= bins[i + 1])
+#                embed()
+#                df[metadata.node_states["symptoms"].state_names[i]] = 1
+
 def decision_tree_consultation(clf, patient, symptoms):
     """
     https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html

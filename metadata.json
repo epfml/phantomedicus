@@ -3,107 +3,161 @@
     "symptom_list": ["symptom_fever", "symptom_cough", "symptom_weight_loss", "symptom_loss_of_appetite", "symptom_lab_mrdt", "symptom_vomiting", "symptom_bleeding"],
     "doctors":
     {
-        "types": ["decision_tree", "random"],
-        "prob_by_country": 
+        "types": ["decision_tree", "random", "biased"],
+        "country": 
         {
-            "Switzerland": [0.9, 0.1],
-            "Nigeria": [0.6, 0.4],
-            "Brazil": [0.6, 0.4],
-            "South Korea": [0.9, 0.1]
+            "Switzerland": {
+                "prob_doctor": [0.9, 0.1, 0.0],
+                "doctor_kwargs":
+                {
+                    "decision_tree": {
+                        "max_dt_depth": 5
+                    },
+                    "random": {
+                        "rand_doc_carelessness": 0.05
+                    },
+                    "biased":
+                    {
+                        "biased_symptoms": ["symptom_misc"]
+                    }
+                }
+            },
+            "Switzerland": {
+                "prob_doctor": [0.6, 0.4, 0.0],
+                "doctor_kwargs":
+                {
+                    "decision_tree": {
+                        "max_dt_depth": 5
+                    },
+                    "random": {
+                        "rand_doc_carelessness": 0.05
+                    },
+                    "biased":
+                    {
+                        "biased_symptoms": ["symptom_misc"]
+                    }
+                }
+            },
+            "Brazil": {
+                "prob_doctor": [0.6, 0.4, 0.0],
+                "doctor_kwargs":
+                {
+                    "decision_tree": {
+                        "max_dt_depth": 5
+                    },
+                    "random": {
+                        "rand_doc_carelessness": 0.05
+                    },
+                    "biased":
+                    {
+                        "biased_symptoms": ["symptom_misc"]
+                    }
+                }
+            },
+            "South Korea": { 
+                "prob_doctor": [0.9, 0.1, 0.0],
+                "doctor_kwargs":
+                {
+                    "decision_tree": {
+                        "max_dt_depth": 5
+                    },
+                    "random": {
+                        "rand_doc_carelessness": 0.05
+                    },
+                    "biased":
+                    {
+                        "biased_symptoms": ["symptom_misc"]
+                    }
+                }
+            }
         }
     },
     "node_states":
     {
         "patient_attributes":
         {
-            "country":
+            "base_country":
             {
-                "prob": [0.25, 0.25, 0.25, 0.25],
-                "state_names": ["Switzerland", "Nigeria", "Brazil", "South Korea"]
+                "dtype": "categorical",
+                "state_names": ["Switzerland", "Nigeria", "Brazil", "South Korea"],
+                "vals": ["Switzerland", "Nigeria", "Brazil", "South Korea"],
+                "prob": [0.25, 0.25, 0.25, 0.25]
             },
-            "age":
+            "base_age":
             {
-                "prob": [0.15, 0.20, 0.30, 0.35],
-                "state_names": ["child", "young", "middle-aged", "elderly"]
+                "dtype": "categorical",
+                "state_names": ["child", "young", "middle-aged", "elderly"],
+                "vals": ["child", "young", "middle-aged", "elderly"],
+                "prob": [0.15, 0.20, 0.30, 0.35]
             },
-            "season":
+            "base_season":
             {
+                "dtype": "categorical",
                 "prob": [0.25, 0.25, 0.25, 0.25],
-                "state_names": ["winter", "spring", "summer", "fall"]
+                "state_names": ["winter", "spring", "summer", "fall"],
+                "vals": ["winter", "spring", "summer", "fall"]
             }
         },
         "diseases": 
         {
             "disease_urti": 
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_bronchiolitis": 
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_bronchitis":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_pneumonia":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_asthma":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_tb":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_covid":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_malaria":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_dengue":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_diarrhea":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_ebola":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "disease_severe":
             {
-                "binary": 1,
-                "prob": [0.1, 0.9],
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             }
         },
@@ -111,37 +165,44 @@
         {
             "symptom_fever":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_cough":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_weight_loss":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_loss_of_appetite":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_lab_mrdt":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_vomiting":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             },
             "symptom_bleeding":
             {
+                "dtype": "binary",
                 "state_names": ["True", "False"]
             }
         }
     },
     "patient_attribute_disease_probs":
     {
-        "country": {
+        "base_country": {
             "disease_urti": [0.07, 0.04, 0.05, 0.04], 
             "disease_bronchiolitis": [0.07, 0.04, 0.05, 0.04], 
             "disease_bronchitis": [0.07, 0.04, 0.05, 0.04],
@@ -155,7 +216,7 @@
             "disease_ebola": [0.07, 0.04, 0.05, 0.04], 
             "disease_severe": [0.07, 0.04, 0.05, 0.04]
         },
-        "age": {
+        "base_age": {
             "disease_urti": [0.04, 0.06, 0.08, 0.1], 
             "disease_bronchiolitis": [0.04, 0.06, 0.08, 0.1], 
             "disease_bronchitis": [0.04, 0.06, 0.08, 0.1],
@@ -169,7 +230,7 @@
             "disease_ebola": [0.04, 0.06, 0.08, 0.1], 
             "disease_severe": [0.04, 0.06, 0.08, 0.1]
         },
-        "season": {
+        "base_season": {
             "disease_urti": [0.1, 0.06, 0.04, 0.08], 
             "disease_bronchiolitis": [0.1, 0.06, 0.04, 0.08], 
             "disease_bronchitis": [0.1, 0.06, 0.04, 0.08],
