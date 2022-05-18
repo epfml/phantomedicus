@@ -14,7 +14,8 @@
                         "max_dt_depth": 5
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
@@ -22,7 +23,7 @@
                     }
                 }
             },
-            "Switzerland": {
+            "Nigeria": {
                 "prob_doctor": [0.6, 0.4, 0.0],
                 "doctor_kwargs":
                 {
@@ -30,7 +31,8 @@
                         "max_dt_depth": 5
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
@@ -46,7 +48,8 @@
                         "max_dt_depth": 5
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
@@ -62,7 +65,8 @@
                         "max_dt_depth": 5
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {

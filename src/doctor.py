@@ -21,21 +21,9 @@ class BaseDoctor(metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-
     @abc.abstractmethod
     def conduct_consultation(self, patient):
         pass
-
-
-class CuriousDoctor(BaseDoctor):
-    """
-    Doctor that asks all questions in the same order as the dataframe and correctly records all symptoms
-    """
-    def __init__(self, data):
-        super().__init__(**kwargs)
-
-    def conduct_consultation(self):
-        raise NotImplementedError
 
 
 class RandomDoctor(BaseDoctor):
@@ -44,20 +32,37 @@ class RandomDoctor(BaseDoctor):
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.enumerate_dict = kwargs['enumerate_dict']
 
     def conduct_consultation(self, patient):
-        question_inds = np.random.uniform(0, 1, self.kwargs['symptoms'].shape)
-        question_inds = np.where(question_inds < self.kwargs['rand_doc_carelessness'], False, True)
-        questions = self.kwargs['symptoms'][question_inds]
+        question_inds = np.random.uniform(0, 1, len(self.kwargs['symptom_list']))
+        question_inds = np.where(question_inds < self.kwargs['doc'].prob_q_asked, True, False)
+        questions = np.array(self.kwargs['symptom_list'])[question_inds]
         np.random.shuffle(questions)
-        embed()
-        answers = np.array(patient[questions]) == 'True'
-        wrong_answer_inds = np.random.uniform(0, 1, questions.shape)
-        wrong_answer_inds = np.where(wrong_answer_inds < self.kwargs['rand_doc_incorrectness'], 1, 0)
-        dodgy_answers = np.where(wrong_answer_inds == 1, ~answers, answers)
 
-        symptom_block = [(q, a_rand) for q, a_rand in zip(questions, dodgy_answers)]
-        base_feature_block = [(q, a) for q, a in zip(self.kwargs['base_features'], patient[self.kwargs['base_features']])]
+        # answers = np.array(patient[questions]) == 'True'
+        wrong_answer_inds = np.random.uniform(0, 1, questions.shape)
+        wrong_answer_inds = np.where(wrong_answer_inds < self.kwargs['doc'].prob_incorrect, False, True)
+        dodgy_answers = np.empty(wrong_answer_inds.shape).astype(np.int)
+        for i, answer in enumerate(wrong_answer_inds):
+            # if symptom incorrectly diagnosed
+            if not answer:
+                # if symptom categorical/ continuous
+                if questions[i] in self.enumerate_dict:
+                    potential_wrong_answers = [x for x in self.enumerate_dict[questions[i]].keys() if not x == patient[questions[i]]]
+                    dodgy_answers[i] = np.random.choice(potential_wrong_answers)
+                # otherwise it's binary
+                else:
+                    dodgy_answers[i] = 1 - patient[questions[i]] # incorrect binary symptom
+            else:
+                dodgy_answers[i] = patient[questions[i]] # correct symptom
+
+        symptom_str_answers = [self.enumerate_dict[q][a] if q in self.enumerate_dict else ["False", "True"][a] for q, a in zip(questions, dodgy_answers)]
+        symptom_block = [(q, a_rand) for q, a_rand in zip(questions, symptom_str_answers)]
+
+        base_feature_qs = self.kwargs['base_feature_list']
+        base_feature_str_answers = [self.enumerate_dict[q][a] if q in self.enumerate_dict else ["False", "True"][a] for q, a in zip(base_feature_qs, patient[base_feature_qs])]
+        base_feature_block = [(q, a) for q, a in zip(base_feature_qs, base_feature_str_answers)]
 
         return {"consultation": [base_feature_block, symptom_block],
                 "raw_patient_data": patient}
@@ -71,25 +76,28 @@ class DecisionTreeDoctor(BaseDoctor):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs['data']
-        self.train_data = self.data[[x for x in self.data.columns if x.split("_")[0] in ['symptom', 'base']]]
-        # May be best to manually one hot encode/ define custom function to assign new column names etc., especially to retrieve decision tree traversal
-        self.train_data.replace({"True": 1, "False": 0}, inplace=True)
-        self.train_data_ohe = OneHotEncoder().fit_transform(self.train_data).toarray()
-        self.data_dict = {'data': np.where(self.data[kwargs['symptoms']].values == 'True', 1, 0),
-                          'target': np.where(self.data[kwargs['diseases']].values == 'True', 1, 0),
-                          'feature_names': kwargs['symptoms'],
-                          'target_names': kwargs['diseases']}
+        self.enumerate_dict = kwargs['enumerate_dict']
+        self.features = [x for x in self.data.columns if x.split("_")[0] in ['base', 'symptom']]
+        self.data_dict = {'data': self.data[self.features],
+                          'target': self.data[kwargs['disease_list']],
+                          'feature_names': self.features,
+                          'target_names': kwargs['disease_list']}
 
-        self.clf = tree.DecisionTreeClassifier(max_depth=kwargs['max_dt_depth'])
-        self.clf = self.clf.fit(self.data_dict['data'], self.data_dict['target'])
+        self.clf = tree.DecisionTreeClassifier(max_depth=kwargs['doc'].max_dt_depth)
+        self.clf = self.clf.fit(self.data_dict['data'].values, self.data_dict['target'].values)
 
 
     def conduct_consultation(self, patient):
         # train decision tree classifier to find best logic for the data, and apply this repeatedly to each patient
         # metrics = cross_val_score(clf, data_dict['data'], data_dict['target'], scoring='accuracy', cv=10)
-        base_feature_block = [(q, a) for q, a in zip(self.kwargs['base_features'], patient[self.kwargs['base_features']])]
-        symptom_block = decision_tree_consultation(self.clf, patient[self.data_dict['feature_names']], self.data_dict['feature_names'])
-        embed()
+        # base_feature_block = [(q, a) for q, a in zip(self.kwargs['base_features'], patient[self.kwargs['base_features']])]
+        # TODO: need to define patient DF s.t. categorical variables are encoded numerically:w
+        consultation_block = decision_tree_consultation(self.clf, patient[self.features], self.features, self.enumerate_dict)
+        base_feature_block = [x for x in consultation_block if x[0].split("_")[0] == "base"]
+        symptom_block = [x for x in consultation_block if x[0].split("_")[0] == "symptom"]
+
+        # assert all(patient[[q for q, a in consultation_block]] == [a for q, a in consultation_block])
+
         return {"consultation": [base_feature_block, symptom_block],
                 "raw_patient_data": patient}
 
@@ -99,12 +107,27 @@ class BiasedDoctor(BaseDoctor):
     Doctor that never asks certain questions (can select which questions are not asked randomly)
     """
     def __init__(self, **kwargs):
-        self.data = kwargs[data]
-        self.biased_symptoms = kwargs
+        super().__init__(**kwargs)
+        self.data = kwargs['data']
+        self.enumerate_dict = kwargs['enumerate_dict']
 
-    def conduct_consultation(self):
+    def conduct_consultation(self, patient):
         # guarantee the biased questions will be asked, ask the rest with certain probabilities left over
-        raise NotImplementedError
+        biased_symptom_qs = np.array(self.kwargs['doc'].biased_symptoms)
+        remaining_features = self.kwargs['base_feature_list'] + [x for x in self.kwargs['symptom_list'] if not x in biased_symptom_qs]
+
+        question_inds = np.random.uniform(0, 1, len(remaining_features))
+        question_inds = np.where(question_inds < self.kwargs['doc'].prob_other_q_asked, True, False)
+
+        questions = np.concatenate([biased_symptom_qs, np.array(remaining_features)[question_inds]])
+        answers = patient[questions]
+        str_answers = [self.enumerate_dict[q][a] if q in self.enumerate_dict else ["False", "True"][a] for q, a in zip(questions, answers)]
+
+        symptom_block = [(q, a) for q, a in zip(questions, str_answers) if 'symptom' in q]
+        base_feature_block = [(q, a) for q, a in zip(questions, str_answers) if 'base' in q]
+
+        return {"consultation": [base_feature_block, symptom_block],
+                "raw_patient_data": patient}
 
 
 class IneptDoctor(BaseDoctor):
@@ -113,6 +136,17 @@ class IneptDoctor(BaseDoctor):
     """
     def __init__(self, data):
         self.data = data
+
+    def conduct_consultation(self):
+        raise NotImplementedError
+
+
+class CuriousDoctor(BaseDoctor):
+    """
+    Doctor that asks all questions in the same order as the dataframe and correctly records all symptoms
+    """
+    def __init__(self, data):
+        super().__init__(**kwargs)
 
     def conduct_consultation(self):
         raise NotImplementedError

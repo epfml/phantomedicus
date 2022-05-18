@@ -27,7 +27,7 @@ def load_config(metadata):
             "biased": BiasedDoctor
         }
 
-    cfg.doctor_kwargs =
+    cfg.doctor_kwargs = \
         {
             'symptoms': np.array(metadata.symptom_list),
             'diseases': np.array(metadata.disease_list),

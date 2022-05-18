@@ -142,6 +142,7 @@ class PatientSimulator:
             # rejection sampling approach inefficient, we consider weighted likelihood sampling instead
             # self.df_patients = inference_engine.reject_sample(self.n_patients)
             df_patients = inference_engine.likelihood_weighted_sample(evidence=evidence, size=n_patients)
+            df_patients.drop("_weight", axis=1, inplace=True) # weight of sample but not relevant as it is a root node in the network
 
         if reject_diseaseless_patients:
             rejection_inds = (df_patients[self.diseases].values == 'False').all(axis=1)

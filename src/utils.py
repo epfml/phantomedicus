@@ -6,37 +6,51 @@ from sklearn import tree
 from IPython import embed
 
 
-def one_hot_encode_patient_df(df, metadata, categorical_columns=None):
+def one_hot_encode_simulated_patient_df(df, metadata):
     df.replace({"True": 1, "False": 0}, inplace=True)
-    embed()
+
     for base_attr in metadata.node_states["patient_attributes"].keys():
-        print(base_attr)
         if not metadata.node_states["patient_attributes"][base_attr].dtype == "binary":
             unique_col_entries = np.unique(df[base_attr])
             for entry in unique_col_entries:
                 df["_".join([base_attr, entry])] = np.where(df[base_attr] == entry, 1, 0)
             df.drop(base_attr, axis=1, inplace=True)
+
     for symptom in metadata.node_states["symptoms"].keys():
         if metadata.node_states["symptoms"][symptom].dtype == "continuous":
             unique_col_entries = np.unique(df[symptom])
             for entry in unique_col_entries:
                 df["_".join([symptom, entry])] = np.where(df[symptom] == entry, 1, 0)
             df.drop(symptom, axis=1, inplace=True)
-    embed()
-    pass
 
-# bins = metadata.node_states["symptoms"][symptom].vals
-#            for i in range(len(bins) - 1):
-#                val_inds = (df[symptom] > bins[i]) & (df[symptom] <= bins[i + 1])
-#                embed()
-#                df[metadata.node_states["symptoms"].state_names[i]] = 1
+    return df
 
-def decision_tree_consultation(clf, patient, symptoms):
+
+def enumerate_categorical_variables(metadata):
+    enumerate_dict = {}
+    for key in metadata.node_states.keys():
+        nodes = metadata.node_states[key]
+        for node in nodes.keys():
+            if nodes[node].dtype in ['categorical', 'continuous']:
+                enumerate_dict[node] = {k: v for k, v in enumerate(nodes[node].state_names)}
+
+    return enumerate_dict
+
+
+def reverse_dict(_dict):
+    rev_dict = {}
+    for key, val in _dict.items():
+        rev_dict[key] = {v: k for k, v in val.items()}
+
+    return rev_dict
+
+
+def decision_tree_consultation(clf, patient, features, categorical_mapping):
     """
     https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html
     """
     x = patient.values.reshape(1, -1)
-    x = np.where(x == "True", 1, 0)
+    # x = np.where(x == "True", 1, 0)
     leaf_id = clf.apply(x)
     feature = clf.tree_.feature
     threshold = clf.tree_.threshold
@@ -45,10 +59,13 @@ def decision_tree_consultation(clf, patient, symptoms):
     # node_index = node_indicator.indices[node_indicator.indptr[i] : node_indicator.indptr[i + 1]]
     node_index = node_indicator.indices[:-1]
     # assert clf.tree_.max_depth == node_index.shape[0], "tree depth and consulation path mismatch..." # this assertion doesn't have to be true..
-    questions = symptoms[feature[node_index]]
+    questions = np.array(features)[feature[node_index]]
     answers = x[:, feature[node_index]].reshape(-1)
+    str_answers = [categorical_mapping[q][a] if q in categorical_mapping else ["False", "True"][a] for q, a in zip(questions, answers)]
 
-    return [(q, a) for q, a in zip(questions, answers)]
+    assert all(patient[questions] == answers), "consultation questions don't match up with patient symptoms"
+
+    return [(q, a) for q, a in zip(questions, str_answers)]
 
 
 def plot_decision_tree(clf, data_dict, file_path):

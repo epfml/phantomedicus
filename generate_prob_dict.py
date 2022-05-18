@@ -206,114 +206,128 @@ if __name__=="__main__":
         "country":
         {
             "rca": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_abdopain"]
                     }
                 }
             },
             "Mali": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_skin"]
                     }
                 }
             },
             "Kenya": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_skin"]
                     }
                 }
             },
             "Tanzania": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_fever_temp"]
                     }
                 }
             },
             "Niger": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_skin"]
                     }
                 }
             },
             "Nigeria": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_skin"]
                     }
                 }
             },
             "Tchad": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.6, 0.2, 0.2],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
                     },
                     "random": {
-                        "rand_doc_carelessness": 0.05
+                        "prob_q_asked": 0.8,
+                        "prob_incorrect": 0.05
                     },
                     "biased":
                     {
-                        "biased_symptoms": ["symptom_misc"]
+                        "prob_other_q_asked": 0.5,
+                        "biased_symptoms": ["symptom_cough", "symptom_fever_his", "symptom_diarr", "symptom_skin"]
                     }
                 }
             }
