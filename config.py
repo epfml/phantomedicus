@@ -17,8 +17,8 @@ def load_config(metadata):
     cfg.consultation_data_path = "../data/all_preprocessed.csv"
     cfg.consultation_data_prob_dict_path = "data/consultation_data_prob_dict.pkl"
 
-    cfg.n_clinics = 50
-    cfg.n_patients_per_clinic = 1000
+    cfg.n_clinics = 1
+    cfg.n_patients_per_clinic = 10000
 
     cfg.doctor_dict = \
         {

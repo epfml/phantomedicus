@@ -63,7 +63,7 @@ class PatientSimulator:
             base_attr_probs = np.array([np.concatenate((x, np.zeros(max_base_attr_len - x.shape))) for x in base_attr_probs])
             prob_dist_combinations = base_attr_probs[np.arange(len(associated_base_attr)), base_state_combs]
             max_prob_per_comb = prob_dist_combinations.max(1).reshape(1, -1)
-            values = np.concatenate([max_prob_per_comb, 1 - max_prob_per_comb], axis=0) # currently this method only works for binary disease categories
+            values = np.concatenate([1 - max_prob_per_comb, max_prob_per_comb], axis=0) # currently this method only works for binary disease categories
 
             disease_state_names = {disease: self.metadata.node_states.diseases[disease].state_names}
             base_attr_state_names = {base_attr: self.metadata.node_states.patient_attributes[base_attr].state_names for base_attr in associated_base_attr}
@@ -79,7 +79,7 @@ class PatientSimulator:
         # adding cpd states for symptoms based on diagnoses
         for symp in self.metadata.symptom_list:
             associated_diseases = list(self.model.predecessors(symp))
-            associated_disease_state_combinations = np.array(list(product(*[[1, 0] for disease in associated_diseases])))
+            associated_disease_state_combinations = np.array(list(product(*[[0, 1] for disease in associated_diseases])))
             if self.metadata.node_states.symptoms[symp].dtype == "binary":
                 associated_disease_probs = np.array([self.metadata.disease_symptom_probs[disease][symp] for disease in associated_diseases])
                 # defining probability of symptom for each combination of diagnoses - simple max for now
@@ -88,7 +88,7 @@ class PatientSimulator:
                 max_prob_per_comb = prob_dist_combinations.max(1).reshape(1, -1)
                 max_prob_per_comb = np.where(max_prob_per_comb == 0, np.min(max_prob_per_comb[max_prob_per_comb.nonzero()]), max_prob_per_comb)
                 assert np.min(max_prob_per_comb) > 0, f"there is a disease configuration for which the probability of {symp} is 0"
-                values = np.concatenate([max_prob_per_comb, 1 - max_prob_per_comb], axis=0)
+                values = np.concatenate([1 - max_prob_per_comb, max_prob_per_comb], axis=0)
             elif self.metadata.node_states.symptoms[symp].dtype == "continuous":
                 associated_disease_probs = np.vstack([np.array(self.metadata.disease_symptom_probs[disease][symp]) for disease in associated_diseases])
                 assert associated_disease_probs.shape[0] == len(associated_diseases), "mismatch between associated diseases and probability array"

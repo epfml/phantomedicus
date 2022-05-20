@@ -80,7 +80,7 @@ if __name__=="__main__":
     df = pd.read_csv(cfg.consultation_data_path)
     df = df[_base_features + _considered_diseases + _considered_symptoms]
     df = preprocess_df(df, _base_features, base_features, _considered_diseases, considered_diseases, _considered_symptoms, considered_symptoms)
-
+    embed()
     base_features_state_dict = {
         "base_country":
         {
@@ -127,8 +127,8 @@ if __name__=="__main__":
     }
     base_features_state_dict = munchify(base_features_state_dict)
 
-    disease_state_dict = {k: {"state_names": ["True", "False"], "dtype": "binary"} for k in considered_diseases}
-    symptom_state_dict = {k: {"state_names": ["True", "False"], "dtype": "binary"} for k in considered_symptoms if not k == "symptom_temp"}
+    disease_state_dict = {k: {"state_names": ["False", "True"], "dtype": "binary"} for k in considered_diseases}
+    symptom_state_dict = {k: {"state_names": ["False", "True"], "dtype": "binary"} for k in considered_symptoms if not k == "symptom_temp"}
     fever_bins = [35, 37, 40, 44]
     fever_state_names = [str(x) + "-" + str(y) for x, y in zip(fever_bins[:-1], fever_bins[1:])]
     symptom_state_dict["symptom_temp"] = {"state_names": fever_state_names, "vals": fever_bins, "dtype": "continuous"}

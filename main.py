@@ -35,6 +35,7 @@ if __name__ == "__main__":
         country = np.random.choice(metadata.node_states.patient_attributes.base_country.state_names)
         evidence = [State('base_country', country)]
         df_patients = BayesNet.run_simulation(cfg.n_patients_per_clinic, evidence=evidence)
+        embed()
         # patient_list = BayesNet.df_to_patient_batch(df_patients)
         # df_patients = one_hot_encode_simulated_patient_df(df_patients, metadata)
         for k, v in reverse_dict(enumerate_dict).items():

@@ -107,62 +107,62 @@
             "disease_urti": 
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_bronchiolitis": 
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_bronchitis":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_pneumonia":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_asthma":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_tb":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_covid":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_malaria":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_dengue":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_diarrhea":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_ebola":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "disease_severe":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             }
         },
         "symptoms": 
@@ -170,37 +170,37 @@
             "symptom_fever":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_cough":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_weight_loss":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_loss_of_appetite":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_lab_mrdt":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_vomiting":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             },
             "symptom_bleeding":
             {
                 "dtype": "binary",
-                "state_names": ["True", "False"]
+                "state_names": ["False", "True"]
             }
         }
     },
