@@ -57,10 +57,13 @@ class PatientSimulator:
             associated_base_attr = list(self.model.predecessors(disease))
             base_state_combs = np.array(list(product(*[np.arange(len(self.metadata.node_states.patient_attributes[base_attr].prob)) for base_attr in associated_base_attr]))) # [::-1]
             base_attr_probs = [np.array(self.metadata.patient_attribute_disease_probs[base_attr][disease]) for base_attr in associated_base_attr]
-
-            # need to concatenate zeros to base feature distributions for broadcasting of base_attr_probs to base_state_combs
+            # need to concatenate zeros with base feature distributions for broadcasting of base_attr_probs to base_state_combs
             max_base_attr_len = np.max([len(x) for x in base_attr_probs])
             base_attr_probs = np.array([np.concatenate((x, np.zeros(max_base_attr_len - x.shape))) for x in base_attr_probs])
+
+            # GET RID OF THIS, ONLY FOR SANITY CHECKS
+            base_attr_probs[1:, :] = 0
+
             prob_dist_combinations = base_attr_probs[np.arange(len(associated_base_attr)), base_state_combs]
             max_prob_per_comb = prob_dist_combinations.max(1).reshape(1, -1)
             values = np.concatenate([1 - max_prob_per_comb, max_prob_per_comb], axis=0) # currently this method only works for binary disease categories

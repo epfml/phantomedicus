@@ -28,14 +28,13 @@ if __name__ == "__main__":
 
     cfg = load_config(metadata)
     BayesNet = PatientSimulator(metadata)
-    # df_trial = BayesNet.run_simulation(100000)
+    df_trial = BayesNet.run_simulation(50000, reject_diseaseless_patients=True)
 
     consultation_collection = {}
     for clinic in range(cfg.n_clinics):
         country = np.random.choice(metadata.node_states.patient_attributes.base_country.state_names)
         evidence = [State('base_country', country)]
         df_patients = BayesNet.run_simulation(cfg.n_patients_per_clinic, evidence=evidence)
-        embed()
         # patient_list = BayesNet.df_to_patient_batch(df_patients)
         # df_patients = one_hot_encode_simulated_patient_df(df_patients, metadata)
         for k, v in reverse_dict(enumerate_dict).items():
