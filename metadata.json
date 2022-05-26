@@ -3,15 +3,23 @@
     "symptom_list": ["symptom_fever", "symptom_cough", "symptom_weight_loss", "symptom_loss_of_appetite", "symptom_lab_mrdt", "symptom_vomiting", "symptom_bleeding"],
     "doctors":
     {
-        "types": ["decision_tree", "random", "biased"],
+        "types": ["decision_tree", "decision_tree_poisoner", "decision_tree_gamer", "random", "biased"],
         "country": 
         {
             "Switzerland": {
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
+                    },
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
+                    },
+                    "decision_tree_gamer": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
                     },
                     "random": {
                         "prob_q_asked": 0.8,
@@ -24,11 +32,19 @@
                 }
             },
             "Nigeria": {
-                "prob_doctor": [0.6, 0.4, 0.0],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
+                    },
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
+                    },
+                    "decision_tree_gamer": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
                     },
                     "random": {
                         "prob_q_asked": 0.8,
@@ -41,35 +57,49 @@
                 }
             },
             "Brazil": {
-                "prob_doctor": [0.6, 0.4, 0.0],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
+                    },
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
+                    },
+                    "decision_tree_gamer": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
                     },
                     "random": {
                         "prob_q_asked": 0.8,
                         "prob_incorrect": 0.05
                     },
-                    "biased":
-                    {
+                    "biased": {
                         "biased_symptoms": ["symptom_misc"]
                     }
                 }
             },
             "South Korea": { 
-                "prob_doctor": [0.9, 0.1, 0.0],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs":
                 {
                     "decision_tree": {
-                        "max_dt_depth": 5
+                        "max_dt_depth": 10
+                    },
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
+                    },
+                    "decision_tree_gamer": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6
                     },
                     "random": {
                         "prob_q_asked": 0.8,
                         "prob_incorrect": 0.05
                     },
-                    "biased":
-                    {
+                    "biased": {
                         "biased_symptoms": ["symptom_misc"]
                     }
                 }

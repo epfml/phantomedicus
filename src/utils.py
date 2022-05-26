@@ -90,7 +90,7 @@ def extract_leaf_node_ids(clf):
         node_depth[node_id] = parent_depth + 1
 
         # If we have a test node
-        if (children_left[node_id] != children_right[node_id]):
+        if children_left[node_id] != children_right[node_id]:
             stack.append((children_left[node_id], parent_depth + 1))
             stack.append((children_right[node_id], parent_depth + 1))
         else:
@@ -99,7 +99,9 @@ def extract_leaf_node_ids(clf):
     return is_leaves
 
 
-def dt_reverse_order_consultation(clf, patient, features, targets, leaf_target, min_correct_ans, categorical_mapping):
+def dt_reverse_order_consultation(
+    clf, patient, features, targets, leaf_target, min_correct_ans, categorical_mapping
+):
     """
     We want to traverse the decision tree in reverse order given a prior assumption on the
     target disease, whilst still guaranteeing a minimum % of correct answers
@@ -111,17 +113,21 @@ def dt_reverse_order_consultation(clf, patient, features, targets, leaf_target, 
     # define splitting conditions at each node
     node_data = [string_data[0]] + string_data[1:-1][::2]
     node_data_dict = {
-        int(k): v for line in node_data for k, v in [(line.split(" ")[0], "".join(line.split(" ")[1:]))]
+        int(k): v
+        for line in node_data
+        for k, v in [(line.split(" ")[0], "".join(line.split(" ")[1:]))]
     }
 
     # define node predecessor dictionary
     dt_edges = string_data[2::2]
     dt_edges_dict = {
-        v: k for line in dt_edges for k, v in [(int(x) for i, x in enumerate(line.split(" ")) if i in [0, 2])]
+        v: k
+        for line in dt_edges
+        for k, v in [(int(x) for i, x in enumerate(line.split(" ")) if i in [0, 2])]
     }
 
     is_leaves = extract_leaf_node_ids(clf)
-    leaf_ids = np.argwhere(is_leaves==True)
+    leaf_ids = np.argwhere(is_leaves == True)
     leaf_preds = clf.tree_.value[leaf_ids]
     leaf_preds = leaf_preds.argmax(-1).reshape(-1, len(targets))
 
@@ -150,12 +156,14 @@ def dt_reverse_order_consultation(clf, patient, features, targets, leaf_target, 
         # check if left or right child to know if bigger or smaller
         consultation_dict = {}
         for i, node in enumerate(dt_path[:-1]):
-            feature, thresh = node_data_dict[node].split("\\")[0].split("\"")[1].split("<=")
+            feature, thresh = (
+                node_data_dict[node].split("\\")[0].split('"')[1].split("<=")
+            )
 
             # if next node in dt_path is left child of current node, condition is '<='
-            comparison = 'geq'
+            comparison = "geq"
             if dt_path[i + 1] == children_left[node]:
-                comparison = 'leq'
+                comparison = "leq"
 
             feature = features[int(feature[2:-1])]
 
@@ -194,20 +202,24 @@ def dt_reverse_order_consultation(clf, patient, features, targets, leaf_target, 
             found_valid_traversal = True
             break
         # else:
-            # print("Traversal didn't yield enough valid symptom diagnoses, trying again")
+        # print("Traversal didn't yield enough valid symptom diagnoses, trying again")
 
     if found_valid_traversal:
         questions = [x[0] for x in consultation]
         answers = [x[1] for x in consultation]
         str_answers = [
-            categorical_mapping[q][a] if q in categorical_mapping else ["False", "True"][a]
+            categorical_mapping[q][a]
+            if q in categorical_mapping
+            else ["False", "True"][a]
             for q, a in zip(questions, answers)
         ]
 
         return [(q, a) for q, a in zip(questions, str_answers)]
 
     else:
-        print(f"Couldn't find a valid traversal ending at {targets[leaf_target]} with >= {min_correct_ans*100}% correct answers\n")
+        print(
+            f"Couldn't find a valid traversal ending at {targets[leaf_target]} with >= {min_correct_ans*100}% correct answers\n"
+        )
         print("Resorting to standard decision tree procedure for this patient")
         return decision_tree_consultation(clf, patient, features, categorical_mapping)
 

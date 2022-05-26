@@ -12,7 +12,11 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import cross_val_score
 
-from src.utils import decision_tree_consultation, dt_reverse_order_consultation, plot_decision_tree
+from src.utils import (
+    decision_tree_consultation,
+    dt_reverse_order_consultation,
+    plot_decision_tree,
+)
 
 
 # blocks of questions e.g. baseline questions (age, country, season) and symptom questions
@@ -31,6 +35,7 @@ class DTBaseDoctor(BaseDoctor):
     Trains decision tree classifier to find best logic for the data, which is applied in different ways
     by profiles defined by derived classes
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]
@@ -39,9 +44,7 @@ class DTBaseDoctor(BaseDoctor):
         self.features = [
             x for x in self.data.columns if x.split("_")[0] in ["base", "symptom"]
         ]
-        self.targets = [
-            x for x in self.data.columns if x.split("_")[0] == "disease"
-        ]
+        self.targets = [x for x in self.data.columns if x.split("_")[0] == "disease"]
         self.data_dict = {
             "data": self.data[self.features],
             "target": self.data[kwargs["disease_list"]],
@@ -96,7 +99,13 @@ class DTPoisonerDoctor(DTBaseDoctor):
     def conduct_consultation(self, patient):
         patient_disease = np.array(self.targets)[patient[self.targets] == 1][0]
         consultation_block = dt_reverse_order_consultation(
-            self.clf, patient, self.features, self.targets, patient_disease, self.doc_kwargs.min_correct_ans, self.categorical_mapping
+            self.clf,
+            patient,
+            self.features,
+            self.targets,
+            patient_disease,
+            self.doc_kwargs.min_correct_ans,
+            self.categorical_mapping,
         )
 
         base_feature_block = [
@@ -123,7 +132,13 @@ class DTGamerDoctor(DTBaseDoctor):
     def conduct_consultation(self, patient):
         patient_disease = np.random.choice(self.targets)
         consultation_block = dt_reverse_order_consultation(
-            self.clf, patient, self.features, self.targets, patient_disease, self.doc_kwargs.min_correct_ans, self.categorical_mapping
+            self.clf,
+            patient,
+            self.features,
+            self.targets,
+            patient_disease,
+            self.doc_kwargs.min_correct_ans,
+            self.categorical_mapping,
         )
         base_feature_block = [
             x for x in consultation_block if x[0].split("_")[0] == "base"
@@ -273,4 +288,3 @@ class ComprehensiveDoctor(BaseDoctor):
 
     def conduct_consultation(self):
         raise NotImplementedError
-

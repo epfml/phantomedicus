@@ -2,6 +2,7 @@
 import sys
 import json
 import pandas as pd
+from tqdm import tqdm
 from IPython import embed
 from munch import munchify
 from pgmpy.factors.discrete import State
@@ -20,6 +21,7 @@ from src.utils import (
 
 if __name__ == "__main__":
     args = parse_args()
+    cfg = load_config()
 
     if args.bayes == "manual_probs":
         with open("metadata.json") as f:
@@ -29,12 +31,12 @@ if __name__ == "__main__":
             metadata = pickle.load(handle)
 
     metadata = munchify(metadata)
-    enumerate_dict = enumerate_categorical_variables(metadata)
+    categorical_mapping = enumerate_categorical_variables(metadata)
 
-    cfg = load_config(metadata)
+    print(f"Generating Bayes Network using {args.bayes}...\n")
     BayesNet = PatientSimulator(metadata)
-    df_trial = BayesNet.run_simulation(50000, reject_diseaseless_patients=True)
-    embed()
+    # df_trial = BayesNet.run_simulation(50000, reject_diseaseless_patients=True)
+
     consultation_collection = {}
     for clinic in range(cfg.n_clinics):
         country = np.random.choice(
@@ -44,12 +46,12 @@ if __name__ == "__main__":
         df_patients = BayesNet.run_simulation(
             cfg.n_patients_per_clinic, evidence=evidence
         )
-        # patient_list = BayesNet.df_to_patient_batch(df_patients)
-        # df_patients = one_hot_encode_simulated_patient_df(df_patients, metadata)
-        for k, v in reverse_dict(enumerate_dict).items():
-            df_patients[k].replace(v, inplace=True)
-        df_patients.replace({"True": 1, "False": 0}, inplace=True)
-        metadata["data"] = df_patients
+
+        df_patients_numeric = df_patients.copy()
+        for k, v in reverse_dict(categorical_mapping).items():
+            df_patients_numeric[k].replace(v, inplace=True)
+        df_patients_numeric.replace({"True": 1, "False": 0}, inplace=True)
+        metadata["data"] = df_patients_numeric
 
         doc_type = np.random.choice(
             metadata.doctors.types, p=metadata.doctors.country[country].prob_doctor
@@ -60,16 +62,18 @@ if __name__ == "__main__":
             "disease_list": metadata.disease_list,
             "base_feature_list": list(metadata.node_states.patient_attributes.keys()),
             "doc": metadata.doctors.country[country].doctor_kwargs[doc_type],
-            "data": df_patients,
-            "enumerate_dict": enumerate_dict,
+            "data": df_patients_numeric,
+            "categorical_mapping": categorical_mapping,
         }
 
         print(doc_type)
         doctor = cfg.doctor_dict[doc_type](**consultation_kwargs)
 
         clinic_consultations = []
-        for _, patient in df_patients.iterrows():
-            clinic_consultations.append(doctor.conduct_consultation(patient))
+        for idx, (_, patient) in tqdm(enumerate(df_patients_numeric.iterrows())):
+            consultation = doctor.conduct_consultation(patient)
+            consultation["raw_patient_data"] = df_patients.iloc[idx]
+            clinic_consultations.append(consultation)
         consultation_collection["_".join([country, str(clinic)])] = clinic_consultations
-
+    embed()
     pickle_object(consultation_collection, "data/consultation_collections.pkl")

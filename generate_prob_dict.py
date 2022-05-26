@@ -63,10 +63,10 @@ def preprocess_df(
 
 
 if __name__ == "__main__":
+    cfg = load_config()
     with open("metadata.json") as f:
         metadata = json.load(f)
     metadata = munchify(metadata)
-    cfg = load_config(metadata)
 
     _base_features = ["country", "a_age", "a_gender2", "a_weight", "wfa", "wfh2"]
     base_features = ["base_" + x for x in _base_features]
@@ -124,7 +124,7 @@ if __name__ == "__main__":
         _considered_symptoms,
         considered_symptoms,
     )
-    embed()
+
     base_features_state_dict = {
         "base_country": {
             "dtype": "categorical",
@@ -297,12 +297,23 @@ if __name__ == "__main__":
                     )
 
     doctors = {
-        "types": ["decision_tree", "random", "biased"],
+        "types": [
+            "decision_tree",
+            "decision_tree_poisoner",
+            "decision_tree_gamer",
+            "random",
+            "biased",
+        ],
         "country": {
             "rca": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -316,9 +327,14 @@ if __name__ == "__main__":
                 },
             },
             "Mali": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -332,9 +348,14 @@ if __name__ == "__main__":
                 },
             },
             "Kenya": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -348,9 +369,14 @@ if __name__ == "__main__":
                 },
             },
             "Tanzania": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -364,9 +390,14 @@ if __name__ == "__main__":
                 },
             },
             "Niger": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -380,9 +411,14 @@ if __name__ == "__main__":
                 },
             },
             "Nigeria": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -396,9 +432,14 @@ if __name__ == "__main__":
                 },
             },
             "Tchad": {
-                "prob_doctor": [0.6, 0.2, 0.2],
+                "prob_doctor": [0.5, 0.4, 0.1, 0.0, 0.0],
                 "doctor_kwargs": {
                     "decision_tree": {"max_dt_depth": 10},
+                    "decision_tree_poisoner": {
+                        "max_dt_depth": 10,
+                        "min_correct_ans": 0.6,
+                    },
+                    "decision_tree_gamer": {"max_dt_depth": 10, "min_correct_ans": 0.6},
                     "random": {"prob_q_asked": 0.8, "prob_incorrect": 0.05},
                     "biased": {
                         "prob_other_q_asked": 0.5,
@@ -428,5 +469,4 @@ if __name__ == "__main__":
     }
 
     pickle_object(metadata_dict, cfg.consultation_data_prob_dict_path)
-
     embed()
