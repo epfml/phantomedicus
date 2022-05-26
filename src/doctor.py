@@ -12,7 +12,7 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import cross_val_score
 
-from src.utils import decision_tree_consultation, plot_decision_tree
+from src.utils import decision_tree_consultation, dt_reverse_order_consultation, plot_decision_tree
 
 
 # blocks of questions e.g. baseline questions (age, country, season) and symptom questions
@@ -26,6 +26,118 @@ class BaseDoctor(metaclass=abc.ABCMeta):
         pass
 
 
+class DTBaseDoctor(BaseDoctor):
+    """
+    Trains decision tree classifier to find best logic for the data, which is applied in different ways
+    by profiles defined by derived classes
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.data = kwargs["data"]
+        self.doc_kwargs = kwargs["doc"]
+        self.categorical_mapping = kwargs["categorical_mapping"]
+        self.features = [
+            x for x in self.data.columns if x.split("_")[0] in ["base", "symptom"]
+        ]
+        self.targets = [
+            x for x in self.data.columns if x.split("_")[0] == "disease"
+        ]
+        self.data_dict = {
+            "data": self.data[self.features],
+            "target": self.data[kwargs["disease_list"]],
+            "feature_names": self.features,
+            "target_names": kwargs["disease_list"],
+        }
+
+        self.clf = tree.DecisionTreeClassifier(max_depth=kwargs["doc"].max_dt_depth)
+        self.clf = self.clf.fit(
+            self.data_dict["data"].values, self.data_dict["target"].values
+        )
+
+
+class DecisionTreeDoctor(DTBaseDoctor):
+    """
+    Doctor that follows decision tree logic
+    https://www.youtube.com/watch?v=v68zYyaEmEA
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def conduct_consultation(self, patient):
+        # metrics = cross_val_score(clf, data_dict['data'], data_dict['target'], scoring='accuracy', cv=10)
+        consultation_block = decision_tree_consultation(
+            self.clf, patient, self.features, self.categorical_mapping
+        )
+
+        base_feature_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "base"
+        ]
+        symptom_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "symptom"
+        ]
+
+        # assert all(patient[[q for q, a in consultation_block]] == [a for q, a in consultation_block])
+
+        return {
+            "consultation": [base_feature_block, symptom_block],
+        }
+
+
+class DTPoisonerDoctor(DTBaseDoctor):
+    """
+    Doctor that follows decision tree logic to reach correct diagnosis but may corrupt answers in the process
+    https://www.youtube.com/watch?v=v68zYyaEmEA
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def conduct_consultation(self, patient):
+        patient_disease = np.array(self.targets)[patient[self.targets] == 1][0]
+        consultation_block = dt_reverse_order_consultation(
+            self.clf, patient, self.features, self.targets, patient_disease, self.doc_kwargs.min_correct_ans, self.categorical_mapping
+        )
+
+        base_feature_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "base"
+        ]
+        symptom_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "symptom"
+        ]
+
+        return {
+            "consultation": [base_feature_block, symptom_block],
+        }
+
+
+class DTGamerDoctor(DTBaseDoctor):
+    """
+    Doctor that follows decision tree logic but only to reach a premeditated diagnosis
+    https://www.youtube.com/watch?v=v68zYyaEmEA
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def conduct_consultation(self, patient):
+        patient_disease = np.random.choice(self.targets)
+        consultation_block = dt_reverse_order_consultation(
+            self.clf, patient, self.features, self.targets, patient_disease, self.doc_kwargs.min_correct_ans, self.categorical_mapping
+        )
+        base_feature_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "base"
+        ]
+        symptom_block = [
+            x for x in consultation_block if x[0].split("_")[0] == "symptom"
+        ]
+
+        return {
+            "consultation": [base_feature_block, symptom_block],
+        }
+
+
+# miscellaneous doctor profiles
 class RandomDoctor(BaseDoctor):
     """
     Doctor that selects questions randomly and may randomly get wrong answers
@@ -33,7 +145,7 @@ class RandomDoctor(BaseDoctor):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.enumerate_dict = kwargs["enumerate_dict"]
+        self.categorical_mapping = kwargs["categorical_mapping"]
 
     def conduct_consultation(self, patient):
         question_inds = np.random.uniform(0, 1, len(self.kwargs["symptom_list"]))
@@ -53,10 +165,10 @@ class RandomDoctor(BaseDoctor):
             # if symptom incorrectly diagnosed
             if not answer:
                 # if symptom categorical/ continuous
-                if questions[i] in self.enumerate_dict:
+                if questions[i] in self.categorical_mapping:
                     potential_wrong_answers = [
                         x
-                        for x in self.enumerate_dict[questions[i]].keys()
+                        for x in self.categorical_mapping[questions[i]].keys()
                         if not x == patient[questions[i]]
                     ]
                     dodgy_answers[i] = np.random.choice(potential_wrong_answers)
@@ -69,8 +181,8 @@ class RandomDoctor(BaseDoctor):
                 dodgy_answers[i] = patient[questions[i]]  # correct symptom
 
         symptom_str_answers = [
-            self.enumerate_dict[q][a]
-            if q in self.enumerate_dict
+            self.categorical_mapping[q][a]
+            if q in self.categorical_mapping
             else ["False", "True"][a]
             for q, a in zip(questions, dodgy_answers)
         ]
@@ -80,8 +192,8 @@ class RandomDoctor(BaseDoctor):
 
         base_feature_qs = self.kwargs["base_feature_list"]
         base_feature_str_answers = [
-            self.enumerate_dict[q][a]
-            if q in self.enumerate_dict
+            self.categorical_mapping[q][a]
+            if q in self.categorical_mapping
             else ["False", "True"][a]
             for q, a in zip(base_feature_qs, patient[base_feature_qs])
         ]
@@ -91,55 +203,6 @@ class RandomDoctor(BaseDoctor):
 
         return {
             "consultation": [base_feature_block, symptom_block],
-            "raw_patient_data": patient,
-        }
-
-
-class DecisionTreeDoctor(BaseDoctor):
-    """
-    Doctor that follows decision tree logic
-    https://www.youtube.com/watch?v=v68zYyaEmEA
-    """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.data = kwargs["data"]
-        self.enumerate_dict = kwargs["enumerate_dict"]
-        self.features = [
-            x for x in self.data.columns if x.split("_")[0] in ["base", "symptom"]
-        ]
-        self.data_dict = {
-            "data": self.data[self.features],
-            "target": self.data[kwargs["disease_list"]],
-            "feature_names": self.features,
-            "target_names": kwargs["disease_list"],
-        }
-
-        self.clf = tree.DecisionTreeClassifier(max_depth=kwargs["doc"].max_dt_depth)
-        self.clf = self.clf.fit(
-            self.data_dict["data"].values, self.data_dict["target"].values
-        )
-
-    def conduct_consultation(self, patient):
-        # train decision tree classifier to find best logic for the data, and apply this repeatedly to each patient
-        # metrics = cross_val_score(clf, data_dict['data'], data_dict['target'], scoring='accuracy', cv=10)
-        # base_feature_block = [(q, a) for q, a in zip(self.kwargs['base_features'], patient[self.kwargs['base_features']])]
-        # TODO: need to define patient DF s.t. categorical variables are encoded numerically:w
-        consultation_block = decision_tree_consultation(
-            self.clf, patient[self.features], self.features, self.enumerate_dict
-        )
-        base_feature_block = [
-            x for x in consultation_block if x[0].split("_")[0] == "base"
-        ]
-        symptom_block = [
-            x for x in consultation_block if x[0].split("_")[0] == "symptom"
-        ]
-
-        # assert all(patient[[q for q, a in consultation_block]] == [a for q, a in consultation_block])
-
-        return {
-            "consultation": [base_feature_block, symptom_block],
-            "raw_patient_data": patient,
         }
 
 
@@ -151,7 +214,7 @@ class BiasedDoctor(BaseDoctor):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]
-        self.enumerate_dict = kwargs["enumerate_dict"]
+        self.categorical_mapping = kwargs["categorical_mapping"]
 
     def conduct_consultation(self, patient):
         # guarantee the biased questions will be asked, ask the rest with certain probabilities left over
@@ -170,8 +233,8 @@ class BiasedDoctor(BaseDoctor):
         )
         answers = patient[questions]
         str_answers = [
-            self.enumerate_dict[q][a]
-            if q in self.enumerate_dict
+            self.categorical_mapping[q][a]
+            if q in self.categorical_mapping
             else ["False", "True"][a]
             for q, a in zip(questions, answers)
         ]
@@ -185,11 +248,10 @@ class BiasedDoctor(BaseDoctor):
 
         return {
             "consultation": [base_feature_block, symptom_block],
-            "raw_patient_data": patient,
         }
 
 
-class IneptDoctor(BaseDoctor):
+class NoviceDoctor(BaseDoctor):
     """
     Doctor that sometimes gets wrong answers
     """
@@ -201,7 +263,7 @@ class IneptDoctor(BaseDoctor):
         raise NotImplementedError
 
 
-class CuriousDoctor(BaseDoctor):
+class ComprehensiveDoctor(BaseDoctor):
     """
     Doctor that asks all questions in the same order as the dataframe and correctly records all symptoms
     """
@@ -212,15 +274,3 @@ class CuriousDoctor(BaseDoctor):
     def conduct_consultation(self):
         raise NotImplementedError
 
-
-if __name__ == "__main__":
-    data = pd.read_csv("data/patient_data.csv")
-    # random_doctor = RandomDoctor(data)
-    # rnd_consultation = random_doctor.conduct_consultation()
-    # random_doctor.save_consultation("data/random_consultation.pickle")
-
-    dt_doctor = DecisionTreeDoctor(data)
-    dt_consultation = dt_doctor.conduct_consultation()
-    dt_doctor.save_consultation("data/dt_consultation.pickle")
-
-    embed()
