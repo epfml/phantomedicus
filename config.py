@@ -16,9 +16,10 @@ def load_config():
     cfg.generate_from_consultation_data = True
     cfg.consultation_data_path = "../data/all_preprocessed.csv"
     cfg.consultation_data_prob_dict_path = "data/consultation_data_prob_dict.pkl"
+    cfg.consultation_output_dir = "data/consultations/"
 
     cfg.n_clinics = 10
-    cfg.n_patients_per_clinic = 500
+    cfg.n_patients_per_clinic = 600
 
     cfg.doctor_dict = {
         "decision_tree": DecisionTreeDoctor,

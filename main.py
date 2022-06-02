@@ -3,6 +3,7 @@ import sys
 import json
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
 from IPython import embed
 from munch import munchify
 from pgmpy.factors.discrete import State
@@ -74,6 +75,10 @@ if __name__ == "__main__":
             consultation = doctor.conduct_consultation(patient)
             consultation["raw_patient_data"] = df_patients.iloc[idx]
             clinic_consultations.append(consultation)
-        consultation_collection["_".join([country, str(clinic)])] = clinic_consultations
-    embed()
-    pickle_object(consultation_collection, "data/consultation_collections.pkl")
+        consultation_collection[
+            "_".join([country, str(doc_type), str(clinic)])
+        ] = clinic_consultations
+
+    Path(cfg.consultation_output_dir).mkdir(parents=True, exist_ok=True)
+    for key, val in consultation_collection.items():
+        pickle_object(val, cfg.consultation_output_dir + f"{key}.pkl")
