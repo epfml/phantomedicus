@@ -20,6 +20,9 @@ def extract_column_data_type(dict_csv):
 
 
 def update_dict(prob_dict, source, target, probabilities):
+    """
+    Function for adding new dependencies in the probability dictionary
+    """
     if source in prob_dict.keys():
         if prob_dict[source]:
             prob_dict[source][target] = np.array(probabilities)
@@ -42,6 +45,9 @@ def preprocess_df(
     prev_symptoms,
     new_symptoms,
 ):
+    """
+    Function for cleaning the MSF data
+    """
     prev_names = prev_base_features + prev_diseases + prev_symptoms
     new_names = new_base_features + new_diseases + new_symptoms
     df.rename(

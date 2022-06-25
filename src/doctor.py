@@ -7,10 +7,6 @@ import numpy as np
 import pandas as pd
 from sklearn import tree
 from IPython import embed
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import cross_val_score
 
 from src.utils import (
     decision_tree_consultation,
@@ -35,7 +31,6 @@ class DTBaseDoctor(BaseDoctor):
     Trains decision tree classifier to find best logic for the data, which is applied in different ways
     by profiles defined by derived classes
     """
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]
@@ -60,7 +55,7 @@ class DTBaseDoctor(BaseDoctor):
 
 class DecisionTreeDoctor(DTBaseDoctor):
     """
-    Doctor that follows decision tree logic
+    "Tree'r" - Doctor that follows decision tree logic by the book
     https://www.youtube.com/watch?v=v68zYyaEmEA
     """
 
@@ -89,7 +84,7 @@ class DecisionTreeDoctor(DTBaseDoctor):
 
 class DTPoisonerDoctor(DTBaseDoctor):
     """
-    Doctor that follows decision tree logic to reach correct diagnosis but may corrupt answers in the process
+    "Skipper" - Doctor that follows decision tree logic to reach correct diagnosis but may corrupt answers in the process
     https://www.youtube.com/watch?v=v68zYyaEmEA
     """
 
@@ -122,7 +117,7 @@ class DTPoisonerDoctor(DTBaseDoctor):
 
 class DTGamerDoctor(DTBaseDoctor):
     """
-    Doctor that follows decision tree logic but only to reach a premeditated diagnosis
+    "Gamer" - Doctor that follows decision tree logic but only to reach a premeditated diagnosis
     https://www.youtube.com/watch?v=v68zYyaEmEA
     """
 
@@ -157,7 +152,6 @@ class RandomDoctor(BaseDoctor):
     """
     Doctor that selects questions randomly and may randomly get wrong answers
     """
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.categorical_mapping = kwargs["categorical_mapping"]
@@ -225,7 +219,6 @@ class BiasedDoctor(BaseDoctor):
     """
     Doctor that never asks certain questions (can select which questions are not asked randomly)
     """
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]
@@ -264,27 +257,3 @@ class BiasedDoctor(BaseDoctor):
         return {
             "consultation": [base_feature_block, symptom_block],
         }
-
-
-class NoviceDoctor(BaseDoctor):
-    """
-    Doctor that sometimes gets wrong answers
-    """
-
-    def __init__(self, data):
-        self.data = data
-
-    def conduct_consultation(self):
-        raise NotImplementedError
-
-
-class ComprehensiveDoctor(BaseDoctor):
-    """
-    Doctor that asks all questions in the same order as the dataframe and correctly records all symptoms
-    """
-
-    def __init__(self, data):
-        super().__init__(**kwargs)
-
-    def conduct_consultation(self):
-        raise NotImplementedError

@@ -7,6 +7,9 @@ from IPython import embed
 
 
 def one_hot_encode_simulated_patient_df(df, metadata):
+    """
+    Creates one hot encoded version of patient
+    """
     df.replace({"True": 1, "False": 0}, inplace=True)
 
     for base_attr in metadata.node_states["patient_attributes"].keys():
@@ -29,6 +32,9 @@ def one_hot_encode_simulated_patient_df(df, metadata):
 
 
 def enumerate_categorical_variables(metadata):
+    """
+    Assigns state numbers to categorical variables
+    """
     enumerate_dict = {}
     for key in metadata.node_states.keys():
         nodes = metadata.node_states[key]
@@ -42,6 +48,9 @@ def enumerate_categorical_variables(metadata):
 
 
 def reverse_dict(_dict):
+    """
+    Inverts dictionary structure
+    """
     rev_dict = {}
     for key, val in _dict.items():
         rev_dict[key] = {v: k for k, v in val.items()}
@@ -51,6 +60,7 @@ def reverse_dict(_dict):
 
 def decision_tree_consultation(clf, patient, features, categorical_mapping):
     """
+    Procedure for conducting the "Tree'r" consultation
     https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html
     """
     x = patient[features].values.reshape(1, -1)
@@ -60,9 +70,7 @@ def decision_tree_consultation(clf, patient, features, categorical_mapping):
     threshold = clf.tree_.threshold
     node_indicator = clf.decision_path(x)
 
-    # node_index = node_indicator.indices[node_indicator.indptr[i] : node_indicator.indptr[i + 1]]
     node_index = node_indicator.indices[:-1]
-    # assert clf.tree_.max_depth == node_index.shape[0], "tree depth and consulation path mismatch..." # this assertion doesn't have to be true..
     questions = np.array(features)[feature[node_index]]
     answers = x[:, feature[node_index]].reshape(-1)
     str_answers = [
@@ -78,6 +86,9 @@ def decision_tree_consultation(clf, patient, features, categorical_mapping):
 
 
 def extract_leaf_node_ids(clf):
+    """
+    Returns the IDs of the leaf nodes
+    """
     n_nodes = clf.tree_.node_count
     children_left = clf.tree_.children_left
     children_right = clf.tree_.children_right
@@ -226,6 +237,7 @@ def dt_reverse_order_consultation(
 
 def plot_decision_tree(clf, data_dict, file_path):
     """
+    Function for plotting and visualizing a generated decision tree
     https://scikit-learn.org/stable/modules/tree.html#classification
     """
     dot_data = tree.export_graphviz(
@@ -245,6 +257,9 @@ def plot_decision_tree(clf, data_dict, file_path):
 
 
 def pickle_object(obj, path):
+    """
+    Storing data in pickled format
+    """
     with open(f"{path}", "wb") as f:
         pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
     print(f"Binary file saved to {path}")

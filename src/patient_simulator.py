@@ -1,6 +1,4 @@
-"""Simulating clinical data probabilistically"""
-# TODO: add functionality for categorical target values (currently only available for source values e.g. base features to binary variables e.g. diseases)
-# TODO: read up on synthetic clinical data simulators
+"""Defining Bayesian Network structure for simulating clinical data probabilistically"""
 import json
 from pathlib import Path
 from itertools import product
@@ -46,9 +44,9 @@ class Patient:
 
 
 class PatientSimulator:
-    # TODO: define probability matrix (DAG) associating symptoms/ environmental factors with diseases
-    # TODO: generate patient profile randomly based on predefined ranges of values/ lists of  (location, age, ethnicity, etc.)
-    # TODO: use probability matrix and patient profiles to determine if/ which disease(s) is/ are present
+    """
+    Patient simulator class which contains functionality for defining the Bayesian Network and for simulating patients.
+    """
     def __init__(self, metadata):
         self.metadata = metadata
         self.init_bayesian_model()
@@ -57,7 +55,9 @@ class PatientSimulator:
         self.patient_list = []
 
     def init_bayesian_model(self):
-        # Defining the model structure by passing edge list of disease->symp dependencies
+        """
+        Defining the model structure by passing edge list of disease->symp dependencies
+        """
         base_attr_disease_edge_list = [
             (x, y)
             for x in self.metadata.patient_attribute_disease_probs.keys()
@@ -116,9 +116,6 @@ class PatientSimulator:
                 ]
             )
 
-            # GET RID OF THIS, ONLY FOR SANITY CHECKS
-            # base_attr_probs[1:, :] = 0
-
             prob_dist_combinations = base_attr_probs[
                 np.arange(len(associated_base_attr)), base_state_combs
             ]
@@ -170,7 +167,6 @@ class PatientSimulator:
                     ]
                 )
                 # defining probability of symptom for each combination of diagnoses - simple max for now
-                # aggregating individual cpds into multivariate cpds: https://www.cmu.edu/dietrich/sds/ddmlab/papers/GonzalezVrbin2007.pdf
                 prob_dist_combinations = (
                     associated_disease_probs * associated_disease_state_combinations
                 )
@@ -244,15 +240,6 @@ class PatientSimulator:
         ), "Something wrong with the model definition"
         print("Bayesian network configured\n")
 
-    def init_bayesian_model_parameter_learning(
-        edge_list, filtered_categorical_df, node_dict
-    ):
-        # https://pgmpy.org - supported data types
-        # use node dict to deduce which variables are categorical/ binary
-        # one hot encode categorical numerical variables using bins
-        # parameter learning with cleaned df
-        pass
-
     def run_simulation(
         self, n_patients, evidence=None, reject_diseaseless_patients=True
     ):
@@ -272,7 +259,7 @@ class PatientSimulator:
             )
             df_patients.drop(
                 "_weight", axis=1, inplace=True
-            )  # weight of sample but not relevant as it is a root node in the network
+            )  # weight of sample but not relevant as base_country is a root node in the network
 
         if reject_diseaseless_patients:
             rejection_inds = (df_patients[self.diseases].values == "False").all(axis=1)
