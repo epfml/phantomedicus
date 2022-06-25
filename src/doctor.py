@@ -31,6 +31,7 @@ class DTBaseDoctor(BaseDoctor):
     Trains decision tree classifier to find best logic for the data, which is applied in different ways
     by profiles defined by derived classes
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]
@@ -152,6 +153,7 @@ class RandomDoctor(BaseDoctor):
     """
     Doctor that selects questions randomly and may randomly get wrong answers
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.categorical_mapping = kwargs["categorical_mapping"]
@@ -219,6 +221,7 @@ class BiasedDoctor(BaseDoctor):
     """
     Doctor that never asks certain questions (can select which questions are not asked randomly)
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = kwargs["data"]

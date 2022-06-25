@@ -47,6 +47,7 @@ class PatientSimulator:
     """
     Patient simulator class which contains functionality for defining the Bayesian Network and for simulating patients.
     """
+
     def __init__(self, metadata):
         self.metadata = metadata
         self.init_bayesian_model()
